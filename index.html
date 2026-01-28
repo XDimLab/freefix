@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="description"
-        content="HUGSIM: A Real-Time, Photo-Realistic and Closed-Loop Simulator for Autonomous Driving">
+        content="FreeFix: Boosting 3D Gaussian Splatting via Fine-Tuning-Free Diffusion Models">
   <meta name="keywords" content="Gaussian urban reconstruction closed-loop simulator">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>HUGSIM</title>
+  <title>FreeFix</title>
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-1FWSVCGZTG"></script>
@@ -65,8 +65,6 @@
             FreeFix: Boosting 3D Gaussian Splatting via Fine-Tuning-Free Diffusion Models
           </h1>
           <h3 class="title has-text-centered">3DV 2026</h3>
-          <!-- <img src="images/hugsim.png" alt="Your Image" style="height: 80px; margin-bottom: 20px; vertical-align: middle;"> -->
-          <!-- <h3 class="title has-text-centered">CVPR 2024</h3> -->
           <div class="is-size-5 publication-authors">
             <span class="author-block">
               <a href="https://github.com/hyzhou404" target="_blank" rel="noopener noreferrer">
@@ -126,7 +124,7 @@
               </span>
               <!-- Code Link. -->
               <span class="link-block">
-                <a href="https://github.com/hyzhou404/HUGSIM" target="_blank" rel="noopener noreferrer"
+                <a href="https://github.com/hyzhou404/FreeFix" target="_blank" rel="noopener noreferrer"
                    class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
                       <i class="fab fa-github"></i>
@@ -159,7 +157,7 @@
     <div class="column is-four-fifths">
       <h2 class="title is-3">Video</h2>
       <div class="publication-video">
-        <iframe width="1600" height="900" src="https://www.youtube.com/embed/C1qoZYyftz0" title="HUGSIM Teaser Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe width="1207" height="679" src="https://www.youtube.com/embed/7ybiQUTM-eU" title="FreeFix: Boosting 3D Gaussian Splatting via Fine-Tuning-Free Diffusion Models" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
       </div>
     </div>
   </div>
@@ -184,19 +182,11 @@
     <div class="columns is-centered has-text-centered">
       <div class="column">
         <h2 class="title is-3">Overview</h2>
-        <!-- <img id="teaser" width="100%" src="./images/teaser.png" alt="Teaser image demonstrating HUGSIM."/> -->
-        <img id="teaser" width="100%" src="images/teaser.jpg" alt="Teaser image demonstrating HUGSIM."/>
+        <!-- <img id="teaser" width="100%" src="./images/teaser.png" alt="Teaser image demonstrating FreeFix."/> -->
+        <img id="teaser" width="100%" src="images/teaser.png" alt="Teaser image demonstrating FreeFix."/>
         <div class="content has-text-justified">
           <p>
-            We present <span class="methodname"><b>HUGSIM</b></span>, a real-time, photo-realistic and closed-loop simulator for autonomous driving.
-            <!-- HUGSIM is an extention of <a href="https://xdimlab.github.io/hugs_website/">HUGS</a>.  -->
-            <!-- We improve the quality of novel view synthesis, particularly when using noisy 2D semantic labels and noisy 3D bounding boxes, 
-            as well as in extrapolated views, ensuring robust performance in dynamic urban scenes. 
-            Beyond novel view synthesis,  -->
-            HUGSIM enables the full closed simulation loop, dynamically updating the ego and actor positions and observations based on control commands.
-            It incorporates 360-degree high-fidelity actor insertion and efficiently generates both normal and aggressive actor behaviors.
-            Moreover, HUGSIM offers a comprehensive benchmark across more than 70 sequences from KITTI-360, Waymo Open Dataset, Nuscenes, and Pandaset, along with over 400 varying scenarios, 
-            providing a fair and realistic evaluation platform for existing autonomous driving algorithms.
+            We introduce <span class="methodname"><b>FreeFix</b></span>, a fine-tuning-free approach designed to eliminate artifacts and boost the rendering quality of 3D Gaussian Splatting (3DGS) in extrapolated views. While existing methods often require costly fine-tuning on domain-specific 3D datasets—which can compromise a model's generalization—FreeFix leverages pre-trained image diffusion models (IDMs) as a zero-shot prior. By utilizing an interleaved 2D-3D refinement strategy and a novel per-pixel confidence guidance, our method achieves high-fidelity, multi-view consistent results that are comparable to or even superior to state-of-the-art fine-tuning-based approaches across diverse datasets like Waymo and Mip-NeRF 360.
           </p>
     </div>
     <!--/ Abstract. -->
@@ -204,110 +194,84 @@
     <!-- Method. -->
     <div class="columns is-centered has-text-centered">
       <div class="column">
-        <h2 class="title is-3">HUGSIM Architecture</h2>
-        <!-- <img id="method" width="100%" src="./images/method.png" alt="HUGSIM Architecture"/> -->
-        <img id="method" width="100%" src="images/method.jpg" alt="HUGSIM Architecture"/>
+        <h2 class="title is-3">FreeFix Architecture</h2>
+        <!-- <img id="method" width="100%" src="./images/method.png" alt="FreeFix Architecture"/> -->
+        <img id="method" width="100%" src="images/method.png" alt="FreeFix Architecture"/>
         <div class="content has-text-justified">
           <p>
-            Our algorithm takes as input posed images of a dynamic urban scene. We decompose the scene into static and dynamic 3D Gaussians,
-            with the motion of dynamic vehicles being modeled via a unicycle model. The 3D Gaussians represent not only appearance but 
-            also semantic and flow information, allowing for rendering the RGB images, semantic labels, as well as optical flow through volume rendering.
+            <span class="methodname"><b>FreeFix</b></span> employs an interleaved 2D-3D refinement strategy to ensure multi-frame consistency without the computational burden of video diffusion models. For a given extrapolated view, the system first renders an initial image from the 3DGS, which is then refined by an image diffusion model guided by a per-pixel confidence mask derived from Fisher information. This mask identifies uncertain regions to target for improvement while preserving high-fidelity areas. These refined 2D views are then integrated back into the 3D scene to update the 3DGS parameters. Additionally, we incorporate multi-level and overall guidance to provide structural hints and maintain consistency, especially in texture-less regions like the sky or ground.
           </p>
         </div>
       </div>
     </div>
     <!-- Method. -->
-
-    <!-- Benchmark -->
-    <div class="columns is-centered has-text-centered">
-      <div class="column">
-        <h2 class="title is-3">Benchmark Evaluation</h2>
-        <!-- <img id="method" width="100%" src="./images/benchmark.png" alt="HUGSIM Architecture"/> -->
-        <img id="benchmark" width="100%" src="images/benchmark.png" alt="HUGSIM Benchmark"/>
-        <div class="content has-text-justified">
-          <p>
-            We evaluate <a href="https://github.com/OpenDriveLab/UniAD">UniAD</a>, <a href="https://github.com/hustvl/VAD">VAD</a> 
-            and <a href="https://github.com/autonomousvision/navsim/blob/4a5584606a1f75e6e48984cabfde5cddd5685a3c/navsim/agents/transfuser/transfuser_agent.py">Latent-Transfuser</a> on our HUGSIM benchmark.
-          </p>
-        </div>
-      </div>
-    </div>
-    <!-- Benchmark -->
-
   </div>
 </section>
 
 
 <h3 class="title has-text-centered">
-  Extrapolated Views Comparison
+  Comparisons
 </h3>
 <section class="hero is-light is-small">
   <div class="hero-body">
     <div class="container">
-      <div id="results-carousel-extrap" class="carousel results-carousel">
 
-        <div class="threeitem">
-          <div class="twentytwenty-container twentytwenty-container-top11">
-            <div class="cmpcontent">
-              <img src="images/extrap/sg_waymo1.jpg">
-            </div>
-            <div class="cmpcontent">
-              <img src="images/extrap/ours_waymo1.jpg">
-            </div>
+      <div class="comparison-grid">
+        <!-- Row 1, Col 1 -->
+        <div class="twentytwenty-container twentytwenty-container-1">
+          <div class="cmpcontent">
+            <img src="images/exp/llff_mip_comp/garden/difix_008.png" alt="Difix3D+">
           </div>
-          <div class="twentytwenty-container twentytwenty-container-top21">
-            <div class="cmpcontent">
-              <img src="images/extrap/sg_waymo2.jpg">
-            </div>
-            <div class="cmpcontent">
-              <img src="images/extrap/ours_waymo2.jpg">
-            </div>
+          <div class="cmpcontent">
+            <img src="images/exp/llff_mip_comp/garden/freefix_flux_008.jpg" alt="FreeFix">
           </div>
-          <div class="twentytwenty-container twentytwenty-container-top31">
-            <div class="cmpcontent">
-              <img src="images/extrap/neurad_nusc1.jpg">
-            </div>
-            <div class="cmpcontent">
-              <img src="images/extrap/ours_nusc1.jpg">
-            </div>
+        </div>
+        <!-- Row 1, Col 2 -->
+        <div class="twentytwenty-container twentytwenty-container-2">
+          <div class="cmpcontent">
+            <img src="images/exp/llff_mip_comp/kitchen/3dgs_005.jpg" alt="3DGS">
+          </div>
+          <div class="cmpcontent">
+            <img src="images/exp/llff_mip_comp/kitchen/freefix_flux_005.jpg" alt="FreeFix">
+          </div>
+        </div>
+        <!-- Row 1, Col 3 -->
+        <div class="twentytwenty-container twentytwenty-container-3">
+          <div class="cmpcontent">
+            <img src="images/exp/llff_mip_comp/fortress/3dgs_0017.jpg" alt="Difix3D+">
+          </div>
+          <div class="cmpcontent">
+            <img src="images/exp/llff_mip_comp/fortress/freefix_flux_0017.jpg" alt="FreeFix">
           </div>
         </div>
 
-        <div class="threeitem">
-          <div class="twentytwenty-container twentytwenty-container-top12">
-            <div class="cmpcontent">
-              <img src="images/extrap/neurad_waymo1.jpg">
-            </div>
-            <div class="cmpcontent">
-              <img src="images/extrap/ours_waymo1.jpg">
-            </div>
+        <!-- Row 2, Col 1 -->
+        <div class="twentytwenty-container twentytwenty-container-4">
+          <div class="cmpcontent">
+            <img src="images/exp/llff_mip_comp/leaves/ve_005.png" alt="ViewExtraplator">
           </div>
-          <div class="twentytwenty-container twentytwenty-container-top22">
-            <div class="cmpcontent">
-              <img src="images/extrap/neurad_waymo2.jpg">
-            </div>
-            <div class="cmpcontent">
-              <img src="images/extrap/ours_waymo2.jpg">
-            </div>
+          <div class="cmpcontent">
+            <img src="images/exp/llff_mip_comp/leaves/freefix+flux_005.jpg" alt="FreeFix">
           </div>
-          <div class="twentytwenty-container twentytwenty-container-top32">
-            <div class="cmpcontent">
-              <img src="images/extrap/neurad_nusc2.jpg">
-            </div>
-            <div class="cmpcontent">
-              <img src="images/extrap/ours_nusc2.jpg">
-            </div>
-          </div>
-          <!-- <div class="twentytwenty-container twentytwenty-container-top42">
-            <div class="cmpcontent">
-              <img src="./images/baseline/vkitti06/ours.png">
-            </div>
-            <div class="cmpcontent">
-              <img src="./images/baseline/vkitti06/mars.png">
-            </div>
-          </div> -->
         </div>
-
+        <!-- Row 2, Col 2 -->
+        <div class="twentytwenty-container twentytwenty-container-5">
+          <div class="cmpcontent">
+            <img src="images/exp/waymo_comp/difix_seq177619_054.png" alt="Difix3D+">
+          </div>
+          <div class="cmpcontent">
+            <img src="images/exp/waymo_comp/freefix_seq177619_054.jpg" alt="FreeFix">
+          </div>
+        </div>
+        <!-- Row 2, Col 3 -->
+        <div class="twentytwenty-container twentytwenty-container-6">
+          <div class="cmpcontent">
+            <img src="images/exp/waymo_comp/sc_seq143481_056.png" alt="StreetCrafter">
+          </div>
+          <div class="cmpcontent">
+            <img src="images/exp/waymo_comp/freefix_seq143481_056.jpg" alt="FreeFix">
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -336,35 +300,14 @@
       autoplay: true,
     });
 
-    $(".twentytwenty-container-top11").twentytwenty({
-      before_label: 'StreetGS',
-      after_label: 'Ours',
-      default_offset_pct: 0.5,
-    });
-    $(".twentytwenty-container-top21").twentytwenty({
-      before_label: 'StreetGS',
-      after_label: 'Ours',
-      default_offset_pct: 0.5,
-    });
-    $(".twentytwenty-container-top12").twentytwenty({
-      before_label: 'NeuRAD',
-      after_label: 'Ours',
-      default_offset_pct: 0.5,
-    });
-    $(".twentytwenty-container-top22").twentytwenty({
-      before_label: 'NeuRAD',
-      after_label: 'Ours',
-      default_offset_pct: 0.5,
-    });
-    $(".twentytwenty-container-top31").twentytwenty({
-      before_label: 'NeuRAD',
-      after_label: 'Ours',
-      default_offset_pct: 0.5,
-    });
-    $(".twentytwenty-container-top32").twentytwenty({
-      before_label: 'NeuRAD',
-      after_label: 'Ours',
-      default_offset_pct: 0.5,
+    $(".twentytwenty-container").each(function() {
+      var beforeLabel = $(this).find("img").eq(0).attr("alt");
+      var afterLabel = $(this).find("img").eq(1).attr("alt");
+      $(this).twentytwenty({
+        before_label: beforeLabel,
+        after_label: afterLabel,
+        default_offset_pct: 0.5,
+      });
     });
   });
 </script>
@@ -397,19 +340,19 @@
 </script>
 
 
-<section class="section" id="BibTeX">
+<!-- <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
     <pre><code>
-      @article{zhou2024hugsim,
-        title={HUGSIM: A Real-Time, Photo-Realistic and Closed-Loop Simulator for Autonomous Driving},
-        author={Zhou, Hongyu and Lin, Longzhong and Wang, Jiabao and Lu, Yichong and Bai, Dongfeng and Liu, Bingbing and Wang, Yue and Geiger, Andreas and Liao, Yiyi},
+      @article{zhou2026freefix,
+        title={FreeFix: Boosting 3D Gaussian Splatting via Fine-Tuning-Free Diffusion Models},
+        author={Zhou, Hongyu and Shao, Zisen and Miao, Sheng and Wang, Pan and Bai, Dongfeng and Liu, Bingbing and Liao, Yiyi},
         journal={arXiv preprint arXiv:2412.01718},
-        year={2024}
+        year={2026}
       }
     </code></pre>
   </div>
-</section>
+</section> -->
 
 <footer class="footer pt-4 pb-0">
   <div class="container">
